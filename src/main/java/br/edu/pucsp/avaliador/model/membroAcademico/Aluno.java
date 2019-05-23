@@ -1,6 +1,6 @@
 package br.edu.pucsp.avaliador.model.membroAcademico;
 
-import br.edu.pucsp.avaliador.dto.AlunoEntity;
+import br.edu.pucsp.avaliador.entities.AlunoEntity;
 
 public class Aluno extends MembroAcademico {
 

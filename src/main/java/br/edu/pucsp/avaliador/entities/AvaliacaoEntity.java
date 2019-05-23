@@ -1,4 +1,4 @@
-package br.edu.pucsp.avaliador.dto;
+package br.edu.pucsp.avaliador.entities;
 
 public class AvaliacaoEntity {
     private AlunoEntity aluno;

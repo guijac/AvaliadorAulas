@@ -1,9 +1,14 @@
 package br.edu.pucsp.avaliador.controller;
 
+import br.edu.pucsp.avaliador.dao.CordenadorRepository;
 import br.edu.pucsp.avaliador.dao.DisciplinaRepository;
 import br.edu.pucsp.avaliador.dao.ProfessorRepository;
-import br.edu.pucsp.avaliador.dto.DisciplinaEntity;
-import br.edu.pucsp.avaliador.dto.ProfessorEntity;
+import br.edu.pucsp.avaliador.dao.UsuarioRepository;
+import br.edu.pucsp.avaliador.entities.CordenadorEntity;
+import br.edu.pucsp.avaliador.entities.DisciplinaEntity;
+import br.edu.pucsp.avaliador.entities.ProfessorEntity;
+import br.edu.pucsp.avaliador.entities.Usuario;
+import br.edu.pucsp.avaliador.model.membroAcademico.CordenadorService;
 import br.edu.pucsp.avaliador.model.membroAcademico.Disciplina;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -36,15 +41,35 @@ public class RecursosHumanosControllerTest {
     @Autowired
     private MongoOperations mongo;
 
+    @Autowired
+    private CordenadorRepository cordenadorRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CordenadorService cordenadorService;
+    private CordenadorEntity cordenador;
+
     @Before
     public void setup() {
         mongo.dropCollection("counters");
         professorRepository.deleteAll();
         disciplinaRepository.deleteAll();
+        cordenadorRepository.deleteAll();
+        usuarioRepository.deleteAll();
 
-        ResponseEntity<DisciplinaEntity> analiseDeTeste = this.restTemplate.postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina("Analise de Teste"), DisciplinaEntity.class);
+        cordenador = cordenadorService.criar("Cordenador", "Para Teste");
+        ResponseEntity<Usuario> usuarioResponse = this.restTemplate
+                .postForEntity("/usuario/criar", new Usuario(cordenador.getRegistroAcademico(), "1234", "CORDENADOR"), Usuario.class);
+        assertThat(usuarioResponse.getStatusCode(), Matchers.is(HttpStatus.OK));
+
+        ResponseEntity<DisciplinaEntity> analiseDeTeste = this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina("Analise de Teste"), DisciplinaEntity.class);
         assertNotNull(analiseDeTeste);
-        ResponseEntity<DisciplinaEntity> analiseDeRequisitos = this.restTemplate.postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina("Analise de Requisitos"), DisciplinaEntity.class);
+        ResponseEntity<DisciplinaEntity> analiseDeRequisitos = this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina("Analise de Requisitos"), DisciplinaEntity.class);
         assertNotNull(analiseDeRequisitos);
     }
 
@@ -56,14 +81,16 @@ public class RecursosHumanosControllerTest {
         disciplinas.add(new DisciplinaEntity("Analise de Requisitos", ""));
         ProfessorEntity professor = new ProfessorEntity("Daniel", "Gatti", disciplinas);
 
-        ResponseEntity<ProfessorEntity> response = this.restTemplate.postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
+        ResponseEntity<ProfessorEntity> response = this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
 
         assertThat(response.getStatusCode(), Matchers.is(HttpStatus.OK));
         assertNotNull(response.getBody());
         assertThat(response.getBody(), Matchers.allOf(
                 Matchers.hasProperty("primeiroNome", Matchers.is("Daniel")),
                 Matchers.hasProperty("sobreNome", Matchers.is("Gatti")),
-                Matchers.hasProperty("registroAcademico", Matchers.is("RA00000001"))
+                Matchers.hasProperty("registroAcademico", Matchers.is("RA00000002"))
         ));
         assertThat(response.getBody().getDisciplinasAptoALecionar(), Matchers.allOf(
                 Matchers.hasItem(Matchers.allOf(

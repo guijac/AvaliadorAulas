@@ -1,11 +1,12 @@
 package br.edu.pucsp.avaliador.controller;
 
-import br.edu.pucsp.avaliador.dto.DisciplinaEntity;
-import br.edu.pucsp.avaliador.dto.ProfessorEntity;
+import br.edu.pucsp.avaliador.entities.DisciplinaEntity;
+import br.edu.pucsp.avaliador.entities.ProfessorEntity;
 import br.edu.pucsp.avaliador.model.membroAcademico.RecursosHumanos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_CORDENADOR')")
 @RequestMapping("/RecursosHumanos")
 public class RecursosHumanosController {
     private RecursosHumanos recursosHumanos;

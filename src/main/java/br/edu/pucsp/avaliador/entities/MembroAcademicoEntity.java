@@ -1,4 +1,4 @@
-package br.edu.pucsp.avaliador.dto;
+package br.edu.pucsp.avaliador.entities;
 
 import org.springframework.data.annotation.Id;
 
@@ -9,7 +9,6 @@ public abstract class MembroAcademicoEntity {
     private String sobreNome;
     @Id
     private String registroAcademico;
-    private GradeHorariaDTO gradeHoraria;
 
     public MembroAcademicoEntity(String primeiroNome, String sobreNome) {
         this.primeiroNome = primeiroNome;
@@ -38,14 +37,6 @@ public abstract class MembroAcademicoEntity {
 
     public void setRegistroAcademico(String registroAcademico) {
         this.registroAcademico = registroAcademico;
-    }
-
-    public GradeHorariaDTO getGradeHoraria() {
-        return gradeHoraria;
-    }
-
-    public void setGradeHoraria(GradeHorariaDTO gradeHoraria) {
-        this.gradeHoraria = gradeHoraria;
     }
 
     @Override

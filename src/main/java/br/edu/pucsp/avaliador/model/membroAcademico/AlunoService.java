@@ -2,16 +2,14 @@ package br.edu.pucsp.avaliador.model.membroAcademico;
 
 import br.edu.pucsp.avaliador.dao.AlunoRepository;
 import br.edu.pucsp.avaliador.dao.CounterService;
-import br.edu.pucsp.avaliador.dto.AlunoEntity;
+import br.edu.pucsp.avaliador.entities.AlunoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-public class AlunoFactory extends MembroAcademicoFactory<AlunoEntity> {
+public class AlunoService extends MembroAcademicoFactory<AlunoEntity> {
     @Autowired
-    protected AlunoFactory(CounterService counterService, AlunoRepository repository) {
+    protected AlunoService(CounterService counterService, AlunoRepository repository) {
         super(counterService, repository);
     }
 
@@ -23,4 +21,6 @@ public class AlunoFactory extends MembroAcademicoFactory<AlunoEntity> {
         }
         return null;
     }
+
+
 }

@@ -1,10 +1,15 @@
 package br.edu.pucsp.avaliador.controller;
 
+import br.edu.pucsp.avaliador.dao.CordenadorRepository;
 import br.edu.pucsp.avaliador.dao.DisciplinaRepository;
 import br.edu.pucsp.avaliador.dao.ProfessorRepository;
-import br.edu.pucsp.avaliador.dto.DisciplinaEntity;
-import br.edu.pucsp.avaliador.dto.ProfessorEntity;
+import br.edu.pucsp.avaliador.dao.UsuarioRepository;
+import br.edu.pucsp.avaliador.entities.CordenadorEntity;
+import br.edu.pucsp.avaliador.entities.DisciplinaEntity;
+import br.edu.pucsp.avaliador.entities.ProfessorEntity;
+import br.edu.pucsp.avaliador.entities.Usuario;
 import br.edu.pucsp.avaliador.model.membroAcademico.Aula;
+import br.edu.pucsp.avaliador.model.membroAcademico.CordenadorService;
 import br.edu.pucsp.avaliador.model.membroAcademico.Disciplina;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -38,6 +43,14 @@ public class CordenadorControllerTest {
     private ProfessorRepository professorRepository;
     @Autowired
     private DisciplinaRepository disciplinaRepository;
+    @Autowired
+    private CordenadorRepository cordenadorRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CordenadorService cordenadorService;
+    private CordenadorEntity cordenador;
 
     @Before
     public void setup() {
@@ -45,10 +58,22 @@ public class CordenadorControllerTest {
         repository.deleteAll();
         professorRepository.deleteAll();
         disciplinaRepository.deleteAll();
+        cordenadorRepository.deleteAll();
+        usuarioRepository.deleteAll();
 
-        ResponseEntity<DisciplinaEntity> analiseDeTeste = this.restTemplate.postForEntity("/Cordenador/cadastrarDisciplina", "Analise de Teste", DisciplinaEntity.class);
+        cordenador = cordenadorService.criar("Cordenador", "Para Teste");
+        ResponseEntity<Usuario> usuarioResponse = this.restTemplate
+                .postForEntity("/usuario/criar", new Usuario(cordenador.getRegistroAcademico(), "1234", "CORDENADOR"), Usuario.class);
+        assertThat(usuarioResponse.getStatusCode(), Matchers.is(HttpStatus.OK));
+
+
+        ResponseEntity<DisciplinaEntity> analiseDeTeste = this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/Cordenador/cadastrarDisciplina", "Analise de Teste", DisciplinaEntity.class);
         assertNotNull(analiseDeTeste);
-        ResponseEntity<DisciplinaEntity> analiseDeRequisitos = this.restTemplate.postForEntity("/Cordenador/cadastrarDisciplina", "Analise de Requisitos", DisciplinaEntity.class);
+        ResponseEntity<DisciplinaEntity> analiseDeRequisitos = this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/Cordenador/cadastrarDisciplina", "Analise de Requisitos", DisciplinaEntity.class);
         assertNotNull(analiseDeRequisitos);
     }
 
@@ -70,7 +95,9 @@ public class CordenadorControllerTest {
     }
 
     private ResponseEntity<Disciplina> cadastrarDisciplina(String disciplina1) {
-        return this.restTemplate.postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina(disciplina1), Disciplina.class);
+        return this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina(disciplina1), Disciplina.class);
     }
 
     @Test
@@ -80,11 +107,15 @@ public class CordenadorControllerTest {
         disciplinas.add(new DisciplinaEntity("Analise de Requisitos", ""));
         ProfessorEntity professor = new ProfessorEntity("Daniel", "Gatti", disciplinas);
 
-        ResponseEntity<ProfessorEntity> professorFromDB = this.restTemplate.postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
+        ResponseEntity<ProfessorEntity> professorFromDB = this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
 
         Disciplina diciplinaTestDeSoftware = cadastrarDisciplina("Test de Software").getBody();
         String codigoDisciplina = diciplinaTestDeSoftware.getCodigo();
-        ResponseEntity<Aula> response1 = this.restTemplate.postForEntity("/Cordenador/cadastrarAula", new Aula(professorFromDB.getBody().getRegistroAcademico(), codigoDisciplina), Aula.class);
+        ResponseEntity<Aula> response1 = this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/Cordenador/cadastrarAula", new Aula(professorFromDB.getBody().getRegistroAcademico(), codigoDisciplina), Aula.class);
 
     }
 }

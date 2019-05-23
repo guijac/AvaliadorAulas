@@ -1,11 +1,11 @@
-package br.edu.pucsp.avaliador.dto;
+package br.edu.pucsp.avaliador.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -24,6 +24,7 @@ public class AulaEntity {
     private List<AlunoEntity> alunosMatriculados;
 
     private List<AgendamentoDeAulaEntity> agendamentos;
+    private AgendamentoDeAulaEntity agentamentoDisponivelParaAvaliacao;
 
     public AulaEntity(String id, ProfessorEntity professor, DisciplinaEntity disciplina) {
         this.id = id;
@@ -80,10 +81,12 @@ public class AulaEntity {
 
     public Optional<AgendamentoDeAulaEntity> getAgendamentoDisponivelParaAvaliacao() {
         return getAgendamentos().stream()
-                .sorted(Comparator.comparing(AgendamentoDeAulaEntity::getData))
+                .sorted(Comparator.comparing(AgendamentoDeAulaEntity::getHoraInicio))
                 .filter(o -> {
-                    LocalDate now = LocalDate.now();
-                    return now.isAfter(o.getData()) && !now.minusDays(2).isAfter(o.getData());
+                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime horarioFim = o.getHoraInicio().plusMinutes(o.getDuration());
+                    return now.isAfter(horarioFim) &&
+                            now.minusDays(2).isBefore(horarioFim);
                 })
                 .findFirst();
     }
@@ -91,7 +94,6 @@ public class AulaEntity {
     public void matricular(AlunoEntity aluno) {
         if (!estaMatriculado(aluno)) {
             alunosMatriculados.add(aluno);
-
         }
         //TODO error
 
@@ -101,8 +103,12 @@ public class AulaEntity {
         return alunosMatriculados.contains(aluno);
     }
 
-    public void addicionarAgendamento(LocalDate data, LocalTime horaInicio, LocalTime horaFim) {
+    public void addicionarAgendamento( LocalDateTime horaInicio, long duration) throws ValidationException {
         //TODO validar data e horario
-        getAgendamentos().add(new AgendamentoDeAulaEntity(data, horaInicio, horaFim));
+
+        if (duration < 50 || duration > 180) {
+            throw new ValidationException("Hora de fim deve ser maior do que hora de inicio.");
+        }
+        getAgendamentos().add(new AgendamentoDeAulaEntity(horaInicio, duration));
     }
 }

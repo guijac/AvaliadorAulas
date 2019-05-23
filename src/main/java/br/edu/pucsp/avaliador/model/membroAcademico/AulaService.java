@@ -1,16 +1,14 @@
 package br.edu.pucsp.avaliador.model.membroAcademico;
 
 import br.edu.pucsp.avaliador.dao.*;
-import br.edu.pucsp.avaliador.dto.*;
+import br.edu.pucsp.avaliador.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Optional;
 
 @Service
-public class AulaFactory {
+public class AulaService {
 
     private CounterService counterService;
     private AulaRepository aulaRepository;
@@ -18,7 +16,7 @@ public class AulaFactory {
     private DisciplinaRepository disciplinaRepository;
 
     @Autowired
-    public AulaFactory(CounterService counterService,
+    public AulaService(CounterService counterService,
                        AulaRepository aulaRepository,
                        ProfessorRepository professorRepository,
                        DisciplinaRepository disciplinaRepository) {

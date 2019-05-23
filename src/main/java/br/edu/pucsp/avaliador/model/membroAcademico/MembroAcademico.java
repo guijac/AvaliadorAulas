@@ -1,6 +1,6 @@
 package br.edu.pucsp.avaliador.model.membroAcademico;
 
-import br.edu.pucsp.avaliador.dto.MembroAcademicoEntity;
+import br.edu.pucsp.avaliador.entities.MembroAcademicoEntity;
 
 import java.util.Objects;
 
