@@ -2,7 +2,7 @@ package br.edu.pucsp.avaliador.model.membroAcademico;
 
 import br.edu.pucsp.avaliador.dao.CounterService;
 import br.edu.pucsp.avaliador.dao.DisciplinaRepository;
-import br.edu.pucsp.avaliador.dto.DisciplinaEntity;
+import br.edu.pucsp.avaliador.entities.DisciplinaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

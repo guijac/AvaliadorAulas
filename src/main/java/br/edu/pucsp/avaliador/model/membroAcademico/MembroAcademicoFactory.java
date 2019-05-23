@@ -2,7 +2,7 @@ package br.edu.pucsp.avaliador.model.membroAcademico;
 
 import br.edu.pucsp.avaliador.dao.CounterService;
 import br.edu.pucsp.avaliador.dao.MembroAcademicoRepository;
-import br.edu.pucsp.avaliador.dto.MembroAcademicoEntity;
+import br.edu.pucsp.avaliador.entities.MembroAcademicoEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -34,5 +34,9 @@ public abstract class MembroAcademicoFactory<E extends MembroAcademicoEntity> {
 
     public Optional<E> encontraPorRegistroAcademico(String registroAcademico){
         return repository.findByRegistroAcademico(registroAcademico);
+    }
+
+    public E atualizar(E alunoEntity) {
+        return repository.save(alunoEntity);
     }
 }

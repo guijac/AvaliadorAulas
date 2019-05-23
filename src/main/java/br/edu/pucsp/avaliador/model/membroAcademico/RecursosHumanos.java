@@ -1,8 +1,8 @@
 package br.edu.pucsp.avaliador.model.membroAcademico;
 
 import br.edu.pucsp.avaliador.dao.DisciplinaRepository;
-import br.edu.pucsp.avaliador.dto.DisciplinaEntity;
-import br.edu.pucsp.avaliador.dto.ProfessorEntity;
+import br.edu.pucsp.avaliador.entities.DisciplinaEntity;
+import br.edu.pucsp.avaliador.entities.ProfessorEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +11,12 @@ import java.util.List;
 
 @Service
 public class RecursosHumanos {
-    private ProfessorFactory professorFactory;
+    private ProfessorService professorService;
     private DisciplinaRepository disciplinaRepository;
 
     @Autowired
-    public RecursosHumanos(ProfessorFactory professorFactory, DisciplinaRepository disciplinaRepository) {
-        this.professorFactory = professorFactory;
+    public RecursosHumanos(ProfessorService professorService, DisciplinaRepository disciplinaRepository) {
+        this.professorService = professorService;
         this.disciplinaRepository = disciplinaRepository;
     }
 
@@ -30,6 +30,6 @@ public class RecursosHumanos {
             }
         });
 
-        return professorFactory.contratar(primeiroNome, sobreNome, disciplinasAptoALecionarDisponiveis);
+        return professorService.contratar(primeiroNome, sobreNome, disciplinasAptoALecionarDisponiveis);
     }
 }

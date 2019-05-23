@@ -1,4 +1,4 @@
-package br.edu.pucsp.avaliador.dto;
+package br.edu.pucsp.avaliador.entities;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
