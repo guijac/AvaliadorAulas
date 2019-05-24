@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class AlunoEntity extends MembroAcademicoEntity {
 
     public AlunoEntity(String primeiroNome, String sobreNome) {
-        super(primeiroNome, sobreNome);
+        super(primeiroNome, sobreNome, Type.ALUNO);
     }
 }

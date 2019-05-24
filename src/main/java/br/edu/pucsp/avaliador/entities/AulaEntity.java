@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,7 +23,6 @@ public class AulaEntity {
     private List<AlunoEntity> alunosMatriculados;
 
     private List<AgendamentoDeAulaEntity> agendamentos;
-    private AgendamentoDeAulaEntity agentamentoDisponivelParaAvaliacao;
 
     public AulaEntity(String id, ProfessorEntity professor, DisciplinaEntity disciplina) {
         this.id = id;
@@ -65,7 +63,7 @@ public class AulaEntity {
         }
 
 
-        Optional<AgendamentoDeAulaEntity> agendamentoDisponivelParaAvaliacao = getAgendamentoDisponivelParaAvaliacao();
+        Optional<AgendamentoDeAulaEntity> agendamentoDisponivelParaAvaliacao = getAgendamentoDisponivelParaAvaliacao(aluno);
 
         if (!agendamentoDisponivelParaAvaliacao.isPresent()) {
             return;//TODO error
@@ -79,9 +77,10 @@ public class AulaEntity {
         agendamentoDisponivelParaAvaliacao.get().getAvaliacoes().add(avaliacao);
     }
 
-    public Optional<AgendamentoDeAulaEntity> getAgendamentoDisponivelParaAvaliacao() {
+    public Optional<AgendamentoDeAulaEntity> getAgendamentoDisponivelParaAvaliacao(AlunoEntity aluno) {
         return getAgendamentos().stream()
                 .sorted(Comparator.comparing(AgendamentoDeAulaEntity::getHoraInicio))
+                .filter(agendamento-> agendamento.getAvaliacoes().stream().noneMatch(a->a.getAluno().equals(aluno)))
                 .filter(o -> {
                     LocalDateTime now = LocalDateTime.now();
                     LocalDateTime horarioFim = o.getHoraInicio().plusMinutes(o.getDuration());

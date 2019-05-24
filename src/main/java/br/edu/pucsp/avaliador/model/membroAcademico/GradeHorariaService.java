@@ -1,5 +1,6 @@
 package br.edu.pucsp.avaliador.model.membroAcademico;
 
+import br.edu.pucsp.avaliador.controller.dto.AulaParaAvaliacao;
 import br.edu.pucsp.avaliador.dao.GradeHorariaRepository;
 import br.edu.pucsp.avaliador.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +43,12 @@ public class GradeHorariaService {
 
     }
 
-    public List<Aula> getAulasParaAvaliacao(AlunoEntity aluno) {
+    public List<AulaParaAvaliacao> getAulasParaAvaliacao(AlunoEntity aluno) {
         Optional<GradeHorariaEntity> gradeHorariaOptional = encontrar(aluno);
         return gradeHorariaOptional.map(gradeHorariaEntity -> gradeHorariaEntity.getAulas().stream().map(aula -> {
-            Aula aulaDTO = new Aula(aula);
-            aula.getAgendamentoDisponivelParaAvaliacao().ifPresent(aulaDTO::setAgendamentoParaAvaliacao);
+            AulaParaAvaliacao aulaDTO = new AulaParaAvaliacao(aula);
+            aula.getAgendamentoDisponivelParaAvaliacao(aluno).ifPresent(agendamento ->aulaDTO.setAgendamentoParaAvaliacao(agendamento.getDTO()));
             return aulaDTO;
-        }).filter(aula -> aula.getAgentamentoParaAvaliacao() != null).collect(Collectors.toList())).orElse(Collections.EMPTY_LIST);
+        }).filter(aula -> aula.getAgentamentoParaAvaliacao() != null).collect(Collectors.toList())).orElse(Collections.emptyList());
     }
 }

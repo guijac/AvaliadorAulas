@@ -1,12 +1,12 @@
 package br.edu.pucsp.avaliador.controller;
 
+import br.edu.pucsp.avaliador.controller.dto.DisciplinaDTO;
 import br.edu.pucsp.avaliador.dao.*;
 import br.edu.pucsp.avaliador.entities.*;
 import br.edu.pucsp.avaliador.model.Avaliacao;
 import br.edu.pucsp.avaliador.model.membroAcademico.Aluno;
 import br.edu.pucsp.avaliador.model.membroAcademico.Aula;
 import br.edu.pucsp.avaliador.model.membroAcademico.CordenadorService;
-import br.edu.pucsp.avaliador.model.membroAcademico.Disciplina;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @RunWith(SpringRunner.class)
@@ -86,9 +85,9 @@ public class AulaControllerTest {
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
                 .postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
 
-        Disciplina diciplinaTestDeSoftware = this.restTemplate
+        DisciplinaDTO diciplinaTestDeSoftware = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina("Test de Software"), Disciplina.class).getBody();
+                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO("Test de Software"), DisciplinaDTO.class).getBody();
         String codigoDisciplina = diciplinaTestDeSoftware.getCodigo();
         aula = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")

@@ -1,11 +1,12 @@
 package br.edu.pucsp.avaliador.controller;
 
+import br.edu.pucsp.avaliador.controller.dto.AulaParaAvaliacao;
+import br.edu.pucsp.avaliador.controller.dto.DisciplinaDTO;
 import br.edu.pucsp.avaliador.dao.*;
 import br.edu.pucsp.avaliador.entities.*;
 import br.edu.pucsp.avaliador.model.membroAcademico.Aluno;
 import br.edu.pucsp.avaliador.model.membroAcademico.Aula;
 import br.edu.pucsp.avaliador.model.membroAcademico.CordenadorService;
-import br.edu.pucsp.avaliador.model.membroAcademico.Disciplina;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -21,9 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,10 +126,9 @@ public class AlunoControllerTest {
 
 
         String url = "/aluno/aulasDisponiveisParaAvaliacao";
-        ResponseEntity<ArrayList<Aula>> aulasParaAvaliacao = this.restTemplate
+        ResponseEntity<ArrayList<AulaParaAvaliacao>> aulasParaAvaliacao = this.restTemplate
                 .withBasicAuth(alunoMatriculado.getBody().getRegistroAcademico(), "1234")
-//                .getForEntity(url,String.class);
-                .exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<ArrayList<Aula>>() {
+                .exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<ArrayList<AulaParaAvaliacao>>() {
                 });
         assertThat(aulasParaAvaliacao.getStatusCode(), is(HttpStatus.OK));
 
@@ -138,21 +136,19 @@ public class AlunoControllerTest {
 
         assertThat(aulasParaAvaliacao.getBody().size(), is(2));
 
-        assertThat(aulasParaAvaliacao.getBody().get(0), allOf(
-                hasProperty("codigoDisciplina", is("2"))
+        assertThat(aulasParaAvaliacao.getBody().get(0).getDisciplina(), allOf(
+                hasProperty("codigo", is("2"))
         ));
-        assertThat(aulasParaAvaliacao.getBody().get(1), allOf(
-                hasProperty("codigoDisciplina", is("3"))
+        assertThat(aulasParaAvaliacao.getBody().get(1).getDisciplina(), allOf(
+                hasProperty("codigo", is("3"))
         ));
-
-
     }
 
     @NotNull
     private Aula adicionarAula(ResponseEntity<ProfessorEntity> professorFromDB, String nomeAula, ResponseEntity<AlunoEntity> alunoMatricula, LocalDateTime horaInicio) {
-        Disciplina diciplinaTestDeSoftware = this.restTemplate
+        DisciplinaDTO diciplinaTestDeSoftware = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina(nomeAula), Disciplina.class).getBody();
+                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO(nomeAula), DisciplinaDTO.class).getBody();
         String codigoDisciplina = diciplinaTestDeSoftware.getCodigo();
         Aula aula = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")

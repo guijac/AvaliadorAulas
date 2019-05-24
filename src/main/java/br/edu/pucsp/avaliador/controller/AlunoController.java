@@ -1,5 +1,6 @@
 package br.edu.pucsp.avaliador.controller;
 
+import br.edu.pucsp.avaliador.controller.dto.AulaParaAvaliacao;
 import br.edu.pucsp.avaliador.entities.AlunoEntity;
 import br.edu.pucsp.avaliador.entities.GradeHorariaEntity;
 import br.edu.pucsp.avaliador.model.membroAcademico.AlunoService;
@@ -47,10 +48,10 @@ public class AlunoController {
 
     @PreAuthorize("hasRole('ROLE_ALUNO')")
     @GetMapping("/aulasDisponiveisParaAvaliacao")
-    public ResponseEntity<List<Aula>> getAulasDisponiveisParaAvaliacao(HttpServletRequest request) {
+    public ResponseEntity<List<AulaParaAvaliacao>> getAulasDisponiveisParaAvaliacao(HttpServletRequest request) {
         Optional<AlunoEntity> aluno = alunoService.encontraPorRegistroAcademico(request.getUserPrincipal().getName());
         if (aluno.isPresent()) {
-            List<Aula> aulas = gradeHorariaService.getAulasParaAvaliacao(aluno.get());
+            List<AulaParaAvaliacao> aulas = gradeHorariaService.getAulasParaAvaliacao(aluno.get());
             return new ResponseEntity<>(aulas, HttpStatus.OK);
         }
         throw new ResponseStatusException(

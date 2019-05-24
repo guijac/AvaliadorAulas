@@ -1,5 +1,6 @@
 package br.edu.pucsp.avaliador.entities;
 
+import br.edu.pucsp.avaliador.controller.dto.DisciplinaDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -20,5 +21,10 @@ public class DisciplinaEntity {
 
     public String getCodigo() {
         return codigo;
+    }
+
+
+    public DisciplinaDTO getDTO(){
+        return new DisciplinaDTO(nome,codigo);
     }
 }

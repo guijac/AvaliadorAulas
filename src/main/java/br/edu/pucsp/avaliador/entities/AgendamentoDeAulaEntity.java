@@ -1,5 +1,6 @@
 package br.edu.pucsp.avaliador.entities;
 
+import br.edu.pucsp.avaliador.controller.dto.AgendamentoParaAvaliacaoDTO;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.time.LocalDateTime;
@@ -54,5 +55,9 @@ public class AgendamentoDeAulaEntity {
 
     public long getDuration() {
         return duration;
+    }
+
+    public AgendamentoParaAvaliacaoDTO getDTO() {
+        return new AgendamentoParaAvaliacaoDTO(horaInicio,duration);
     }
 }

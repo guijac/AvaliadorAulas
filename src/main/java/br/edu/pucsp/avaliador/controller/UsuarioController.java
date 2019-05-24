@@ -1,5 +1,6 @@
 package br.edu.pucsp.avaliador.controller;
 
+import br.edu.pucsp.avaliador.controller.dto.MembroAcademicoDTO;
 import br.edu.pucsp.avaliador.entities.*;
 import br.edu.pucsp.avaliador.model.membroAcademico.AlunoService;
 import br.edu.pucsp.avaliador.model.membroAcademico.CordenadorService;
@@ -13,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
+
+import static br.edu.pucsp.avaliador.entities.MembroAcademicoEntity.Type.ALUNO;
 
 
 @RestController
@@ -34,7 +37,7 @@ public class UsuarioController {
     }
 
     @GetMapping()
-    public ResponseEntity<MembroAcademicoEntity> encontrarUsuario(HttpServletRequest request) {
+    public ResponseEntity<MembroAcademicoDTO> encontrarUsuario(HttpServletRequest request) {
         Optional<Usuario> usuario = usuarioService.encontrarUsuario(request.getUserPrincipal().getName());
         if (!usuario.isPresent()) {
             throw new ResponseStatusException(
@@ -42,7 +45,7 @@ public class UsuarioController {
         }
 
         MembroAcademicoEntity membroAcademico = validarUsuario(usuario.get().getNomeDeUsuario(), usuario.get().getRole());
-        return new ResponseEntity<>(membroAcademico, HttpStatus.OK);
+        return new ResponseEntity<>(membroAcademico.getDTO(), HttpStatus.OK);
     }
 
     @PostMapping("/criar")
@@ -70,22 +73,22 @@ public class UsuarioController {
     }
 
     private MembroAcademicoEntity validarUsuario(String nomeDeUsuario, String role) {
-        switch (role) {
-            case "ALUNO":
+        switch (MembroAcademicoEntity.Type.valueOf(role.toUpperCase())) {
+            case ALUNO:
                 Optional<AlunoEntity> aluno = alunoService.encontraPorRegistroAcademico(nomeDeUsuario);
                 if (!aluno.isPresent()) {
                     throw new ResponseStatusException(
                             HttpStatus.INTERNAL_SERVER_ERROR, String.format("O ra (%s) não pertence a um aluno valido.", nomeDeUsuario));
                 }
                 return aluno.get();
-            case "PROFESSOR":
+            case PROFESSOR:
                 Optional<ProfessorEntity> professor = professorService.encontraPorRegistroAcademico(nomeDeUsuario);
                 if (!professor.isPresent()) {
                     throw new ResponseStatusException(
                             HttpStatus.INTERNAL_SERVER_ERROR, String.format("O ra (%s) não pertence a um professor valido.", nomeDeUsuario));
                 }
                 return professor.get();
-            case "CORDENADOR":
+            case CORDENADOR:
                 Optional<CordenadorEntity> cordenador = cordenadorService.encontraPorRegistroAcademico(nomeDeUsuario);
                 if (!cordenador.isPresent()) {
                     throw new ResponseStatusException(

@@ -1,5 +1,6 @@
 package br.edu.pucsp.avaliador.controller;
 
+import br.edu.pucsp.avaliador.controller.dto.DisciplinaDTO;
 import br.edu.pucsp.avaliador.dao.CordenadorRepository;
 import br.edu.pucsp.avaliador.dao.DisciplinaRepository;
 import br.edu.pucsp.avaliador.dao.ProfessorRepository;
@@ -9,7 +10,6 @@ import br.edu.pucsp.avaliador.entities.DisciplinaEntity;
 import br.edu.pucsp.avaliador.entities.ProfessorEntity;
 import br.edu.pucsp.avaliador.entities.Usuario;
 import br.edu.pucsp.avaliador.model.membroAcademico.CordenadorService;
-import br.edu.pucsp.avaliador.model.membroAcademico.Disciplina;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,11 +65,11 @@ public class RecursosHumanosControllerTest {
 
         ResponseEntity<DisciplinaEntity> analiseDeTeste = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina("Analise de Teste"), DisciplinaEntity.class);
+                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO("Analise de Teste"), DisciplinaEntity.class);
         assertNotNull(analiseDeTeste);
         ResponseEntity<DisciplinaEntity> analiseDeRequisitos = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new Disciplina("Analise de Requisitos"), DisciplinaEntity.class);
+                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO("Analise de Requisitos"), DisciplinaEntity.class);
         assertNotNull(analiseDeRequisitos);
     }
 

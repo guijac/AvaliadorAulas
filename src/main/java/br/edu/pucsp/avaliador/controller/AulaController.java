@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RestController
@@ -32,13 +33,14 @@ public class AulaController {
     @PreAuthorize("hasRole('ROLE_ALUNO')")
     @PostMapping("/avaliar/{aulaId}")
     public ResponseEntity<AulaEntity> avaliar(@PathVariable String aulaId,
-                                              @RequestBody Avaliacao avaliacaoRequest) {
+                                              @RequestBody Avaliacao avaliacaoRequest,
+                                              HttpServletRequest request) {
 
         Optional<AulaEntity> optionalAula = aulaService.encontrarAula(aulaId);
         if (avaliacaoRequest.getAluno() == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Dados de aluno faltando");
         }
-        String registroAcademico = avaliacaoRequest.getAluno().getRegistroAcademico();
+        String registroAcademico = request.getUserPrincipal().getName();
 
         Optional<AvaliacaoEntity> optionalAvaliacao = avaliacaoFactory.criarAvaliacao(registroAcademico, avaliacaoRequest.getNrEstrelas());
 
