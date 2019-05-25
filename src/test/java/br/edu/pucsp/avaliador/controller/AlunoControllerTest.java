@@ -101,9 +101,14 @@ public class AlunoControllerTest {
         List<DisciplinaEntity> disciplinas = new ArrayList<>();
         disciplinas.add(new DisciplinaEntity("Analise de Teste", ""));
         disciplinas.add(new DisciplinaEntity("Analise de Requisitos", ""));
-        ProfessorEntity professor = new ProfessorEntity("Daniel", "Gatti", disciplinas);
 
-        ResponseEntity<ProfessorEntity> professorFromDB = this.restTemplate
+        ProfessorEntity professorDaniel = new ProfessorEntity("Daniel", "Gatti", disciplinas);
+        ResponseEntity<ProfessorEntity> professorDanielFromDB = this.restTemplate
+                .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
+                .postForEntity("/recursosHumanos/contratar/professor", professorDaniel, ProfessorEntity.class);
+
+        ProfessorEntity professor = new ProfessorEntity("Renato", "Manzan", disciplinas);
+        ResponseEntity<ProfessorEntity> professorRenatoFromDB = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
                 .postForEntity("/recursosHumanos/contratar/professor", professor, ProfessorEntity.class);
 
@@ -118,11 +123,17 @@ public class AlunoControllerTest {
         assertThat(usuarioAlunoResponse.getStatusCode(), Matchers.is(HttpStatus.OK));
 
 
-        adicionarAula(professorFromDB, "Aula 1", alunoMatriculado, localTime.minusDays(2).minusHours(2));
-        adicionarAula(professorFromDB, "Aula 2", alunoMatriculado, localTime.minusDays(1).minusHours(2));
-        adicionarAula(professorFromDB, "Aula 3", alunoMatriculado, localTime.minusHours(2));
-        adicionarAula(professorFromDB, "Aula 4", alunoMatriculado, localTime.minusHours(1));
-        adicionarAula(professorFromDB, "Aula 5", alunoMatriculado, localTime);
+        adicionarAula(professorDanielFromDB, "Testes 1", alunoMatriculado, localTime.minusDays(2).minusHours(2));
+        adicionarAula(professorDanielFromDB, "Testes 2", alunoMatriculado, localTime.minusDays(1).minusHours(2));
+        adicionarAula(professorDanielFromDB, "Testes 3", alunoMatriculado, localTime.minusHours(2));
+        adicionarAula(professorDanielFromDB, "Testes 4", alunoMatriculado, localTime.minusHours(1));
+        adicionarAula(professorDanielFromDB, "Testes 5", alunoMatriculado, localTime);
+
+        adicionarAula(professorRenatoFromDB, "Engenharia de SW 1", alunoMatriculado, localTime.minusDays(2).minusHours(4));
+        adicionarAula(professorRenatoFromDB, "Engenharia de SW 2", alunoMatriculado, localTime.minusDays(1).minusHours(4));
+        adicionarAula(professorRenatoFromDB, "Engenharia de SW 3", alunoMatriculado, localTime.minusHours(4));
+        adicionarAula(professorRenatoFromDB, "Engenharia de SW 4", alunoMatriculado, localTime.plusHours(1));
+        adicionarAula(professorRenatoFromDB, "Engenharia de SW 5", alunoMatriculado, localTime);
 
 
         String url = "/aluno/aulasDisponiveisParaAvaliacao";
@@ -134,7 +145,7 @@ public class AlunoControllerTest {
 
         assertNotNull(aulasParaAvaliacao.getBody());
 
-        assertThat(aulasParaAvaliacao.getBody().size(), is(2));
+        assertThat(aulasParaAvaliacao.getBody().size(), is(4));
 
         assertThat(aulasParaAvaliacao.getBody().get(0).getDisciplina(), allOf(
                 hasProperty("codigo", is("2"))

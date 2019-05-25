@@ -80,7 +80,9 @@ public class CordenadorController {
             ranking.add(new ProfessorAvaliadoDTO(professor.getDTO(),nrEstrelas));
         }
 
-        ranking = ranking.stream().sorted(Comparator.comparing(ProfessorAvaliadoDTO::getNumeroDeEstrelas)).collect(Collectors.toList());
+        ranking = ranking.stream()
+                .filter(p->!p.getNumeroDeEstrelas().equals("NaN"))
+                .sorted((p1,p2)-> p2.getNumeroDeEstrelas().compareTo(p1.getNumeroDeEstrelas())).collect(Collectors.toList());
 
         return new ResponseEntity<>(ranking, HttpStatus.OK);
     }
