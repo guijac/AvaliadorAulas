@@ -36,23 +36,28 @@ public class AulaController {
                                               @RequestBody Avaliacao avaliacaoRequest,
                                               HttpServletRequest request) {
 
-        Optional<AulaEntity> optionalAula = aulaService.encontrarAula(aulaId);
-        if (avaliacaoRequest.getAluno() == null) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Dados de aluno faltando");
-        }
-        String registroAcademico = request.getUserPrincipal().getName();
+        try {
+            Optional<AulaEntity> optionalAula = aulaService.encontrarAula(aulaId);
+            if (avaliacaoRequest.getAluno() == null) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Dados de aluno faltando");
+            }
+            String registroAcademico = request.getUserPrincipal().getName();
 
-        Optional<AvaliacaoEntity> optionalAvaliacao = avaliacaoFactory.criarAvaliacao(registroAcademico, avaliacaoRequest.getNrEstrelas());
+            Optional<AvaliacaoEntity> optionalAvaliacao = avaliacaoFactory.criarAvaliacao(registroAcademico, avaliacaoRequest.getNrEstrelas());
 
-        if (optionalAula.isPresent() && optionalAvaliacao.isPresent()) {
-            AulaEntity aula = optionalAula.get();
-            AvaliacaoEntity avaliacao = optionalAvaliacao.get();
-            aula.avaliar(avaliacao);
-            AulaEntity aulaAvaliada = aulaService.atualizar(aula);
-            return new ResponseEntity<>(aulaAvaliada, HttpStatus.OK);
+            if (optionalAula.isPresent() && optionalAvaliacao.isPresent()) {
+                AulaEntity aula = optionalAula.get();
+                AvaliacaoEntity avaliacao = optionalAvaliacao.get();
+                aula.avaliar(avaliacao);
+                AulaEntity aulaAvaliada = aulaService.atualizar(aula);
+                return new ResponseEntity<>(aulaAvaliada, HttpStatus.OK);
+            }
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Falha na avaliação");
+        } catch (ValidationException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        throw new ResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR, "Falha na avaliação");
     }
 
     @PreAuthorize("hasRole('ROLE_ALUNO')")

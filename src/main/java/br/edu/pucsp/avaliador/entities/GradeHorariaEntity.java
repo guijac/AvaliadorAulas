@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Document(collection = "gradeHoraria")
 public class GradeHorariaEntity {
@@ -33,5 +34,23 @@ public class GradeHorariaEntity {
     public void incluirAula(AulaEntity aula) {
         //TODO verificar conflitos de aulas
         aulas.add(aula);
+    }
+
+
+    public String avaliacaoMedia(GradeHorariaEntity gradeHorariaOptional) {
+        List<Integer> avaliacoesTotais = gradeHorariaOptional.getAulas().stream()
+                .flatMap(aula -> aula.getAgendamentos().stream())
+                .flatMap(agendamento -> agendamento.getAvaliacoes().stream())
+                .filter(a -> a.getNumeroEstrelas() != null)
+                .filter(a -> a.getNumeroEstrelas() >= 1)
+                .filter(a -> a.getNumeroEstrelas() <= 5)
+                .map(AvaliacaoEntity::getNumeroEstrelas).collect(Collectors.toList());
+
+        float extrelasTotais = 0;
+        for (Integer nrEstrelas : avaliacoesTotais) {
+            extrelasTotais = extrelasTotais + nrEstrelas;
+        }
+
+        return String.valueOf(extrelasTotais / avaliacoesTotais.size());
     }
 }

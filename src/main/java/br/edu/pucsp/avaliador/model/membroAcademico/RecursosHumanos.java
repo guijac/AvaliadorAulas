@@ -32,4 +32,12 @@ public class RecursosHumanos {
 
         return professorService.contratar(primeiroNome, sobreNome, disciplinasAptoALecionarDisponiveis);
     }
+
+
+    public List<ProfessorEntity> encontrarTodosProfessores() {
+        return professorService.encontrarTodos();
+    }
+
+
+
 }

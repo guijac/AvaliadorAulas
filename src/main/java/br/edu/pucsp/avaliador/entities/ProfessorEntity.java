@@ -1,6 +1,5 @@
 package br.edu.pucsp.avaliador.entities;
 
-import br.edu.pucsp.avaliador.controller.dto.ProfessorDTO;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 

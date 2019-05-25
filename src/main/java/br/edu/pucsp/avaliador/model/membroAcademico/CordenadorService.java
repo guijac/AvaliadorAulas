@@ -4,6 +4,7 @@ import br.edu.pucsp.avaliador.controller.dto.DisciplinaDTO;
 import br.edu.pucsp.avaliador.dao.CordenadorRepository;
 import br.edu.pucsp.avaliador.dao.CounterService;
 import br.edu.pucsp.avaliador.entities.CordenadorEntity;
+import br.edu.pucsp.avaliador.entities.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public class CordenadorService extends MembroAcademicoFactory<CordenadorEntity> 
     private AulaService aulaService;
 
     @Autowired
-    public CordenadorService(DisciplinaService disciplinaService, AulaService aulaService, CounterService counter, CordenadorRepository repository) {
+    public CordenadorService(DisciplinaService disciplinaService, AulaService aulaService, CounterService counter, CordenadorRepository repository, ProfessorService professorService) {
         super(counter, repository);
         this.disciplinaService = disciplinaService;
         this.aulaService = aulaService;
@@ -24,7 +25,7 @@ public class CordenadorService extends MembroAcademicoFactory<CordenadorEntity> 
         return disciplinaService.criar(disciplinaNome);
     }
 
-    public Aula cadastrarAula(String raProfessor, String codigoDisciplina) {
+    public Aula cadastrarAula(String raProfessor, String codigoDisciplina) throws ValidationException {
         return aulaService.criar(raProfessor, codigoDisciplina);
     }
 
@@ -36,4 +37,5 @@ public class CordenadorService extends MembroAcademicoFactory<CordenadorEntity> 
         }
         return null;
     }
+
 }

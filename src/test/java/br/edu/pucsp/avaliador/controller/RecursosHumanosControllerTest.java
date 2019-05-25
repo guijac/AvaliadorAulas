@@ -1,10 +1,7 @@
 package br.edu.pucsp.avaliador.controller;
 
 import br.edu.pucsp.avaliador.controller.dto.DisciplinaDTO;
-import br.edu.pucsp.avaliador.dao.CordenadorRepository;
-import br.edu.pucsp.avaliador.dao.DisciplinaRepository;
-import br.edu.pucsp.avaliador.dao.ProfessorRepository;
-import br.edu.pucsp.avaliador.dao.UsuarioRepository;
+import br.edu.pucsp.avaliador.dao.*;
 import br.edu.pucsp.avaliador.entities.CordenadorEntity;
 import br.edu.pucsp.avaliador.entities.DisciplinaEntity;
 import br.edu.pucsp.avaliador.entities.ProfessorEntity;
@@ -45,6 +42,8 @@ public class RecursosHumanosControllerTest {
     private CordenadorRepository cordenadorRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private GradeHorariaRepository gradeHorariaRepository;
 
     @Autowired
     private CordenadorService cordenadorService;
@@ -57,6 +56,7 @@ public class RecursosHumanosControllerTest {
         disciplinaRepository.deleteAll();
         cordenadorRepository.deleteAll();
         usuarioRepository.deleteAll();
+        gradeHorariaRepository.deleteAll();
 
         cordenador = cordenadorService.criar("Cordenador", "Para Teste");
         ResponseEntity<Usuario> usuarioResponse = this.restTemplate
@@ -65,11 +65,11 @@ public class RecursosHumanosControllerTest {
 
         ResponseEntity<DisciplinaEntity> analiseDeTeste = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO("Analise de Teste"), DisciplinaEntity.class);
+                .postForEntity("/cordenador/cadastrarDisciplina", new DisciplinaDTO("Analise de Teste"), DisciplinaEntity.class);
         assertNotNull(analiseDeTeste);
         ResponseEntity<DisciplinaEntity> analiseDeRequisitos = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO("Analise de Requisitos"), DisciplinaEntity.class);
+                .postForEntity("/cordenador/cadastrarDisciplina", new DisciplinaDTO("Analise de Requisitos"), DisciplinaEntity.class);
         assertNotNull(analiseDeRequisitos);
     }
 
@@ -83,7 +83,7 @@ public class RecursosHumanosControllerTest {
 
         ResponseEntity<ProfessorEntity> response = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
+                .postForEntity("/recursosHumanos/contratar/professor", professor, ProfessorEntity.class);
 
         assertThat(response.getStatusCode(), Matchers.is(HttpStatus.OK));
         assertNotNull(response.getBody());

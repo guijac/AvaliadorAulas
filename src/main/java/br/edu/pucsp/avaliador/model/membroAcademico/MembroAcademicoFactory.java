@@ -5,6 +5,7 @@ import br.edu.pucsp.avaliador.dao.MembroAcademicoRepository;
 import br.edu.pucsp.avaliador.entities.MembroAcademicoEntity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 public abstract class MembroAcademicoFactory<E extends MembroAcademicoEntity> {
@@ -38,5 +39,9 @@ public abstract class MembroAcademicoFactory<E extends MembroAcademicoEntity> {
 
     public E atualizar(E alunoEntity) {
         return repository.save(alunoEntity);
+    }
+
+    protected List<E> encontrarTodos() {
+        return repository.findAll();
     }
 }

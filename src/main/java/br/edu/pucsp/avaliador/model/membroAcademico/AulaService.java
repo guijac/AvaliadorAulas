@@ -14,19 +14,21 @@ public class AulaService {
     private AulaRepository aulaRepository;
     private ProfessorRepository professorRepository;
     private DisciplinaRepository disciplinaRepository;
+    private GradeHorariaService gradeHorariaService;
 
     @Autowired
     public AulaService(CounterService counterService,
                        AulaRepository aulaRepository,
                        ProfessorRepository professorRepository,
-                       DisciplinaRepository disciplinaRepository) {
+                       DisciplinaRepository disciplinaRepository, GradeHorariaService gradeHorariaService) {
         this.counterService = counterService;
         this.aulaRepository = aulaRepository;
         this.professorRepository = professorRepository;
         this.disciplinaRepository = disciplinaRepository;
+        this.gradeHorariaService = gradeHorariaService;
     }
 
-    public Aula criar(String raProfessor, String codigoDisciplina) {
+    public Aula criar(String raProfessor, String codigoDisciplina) throws ValidationException {
         Optional<ProfessorEntity> professor = professorRepository.findByRegistroAcademico(raProfessor);
         if (!professor.isPresent()) {
             //TODO
@@ -42,6 +44,8 @@ public class AulaService {
         if (aulaCriada == null) {
             //TODO
         }
+
+        gradeHorariaService.adicionarAula(professor.get(),aula);
         return new Aula(aulaCriada);
     }
 

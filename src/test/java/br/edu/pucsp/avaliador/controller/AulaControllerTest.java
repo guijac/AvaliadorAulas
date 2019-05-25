@@ -83,15 +83,15 @@ public class AulaControllerTest {
 
         ResponseEntity<ProfessorEntity> professorFromDB = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
+                .postForEntity("/recursosHumanos/contratar/professor", professor, ProfessorEntity.class);
 
         DisciplinaDTO diciplinaTestDeSoftware = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO("Test de Software"), DisciplinaDTO.class).getBody();
+                .postForEntity("/cordenador/cadastrarDisciplina", new DisciplinaDTO("Test de Software"), DisciplinaDTO.class).getBody();
         String codigoDisciplina = diciplinaTestDeSoftware.getCodigo();
         aula = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarAula", new Aula(professorFromDB.getBody().getRegistroAcademico(), codigoDisciplina), Aula.class).getBody();
+                .postForEntity("/cordenador/cadastrarAula", new Aula(professorFromDB.getBody().getRegistroAcademico(), codigoDisciplina), Aula.class).getBody();
         aluno = this.restTemplate.postForEntity("/aluno/matricular", new Aluno("Nome1", "SobreNome"), AlunoEntity.class).getBody();
         ResponseEntity<Usuario> usuarioAlunoResponse = this.restTemplate
                 .postForEntity("/usuario/criar", new Usuario(aluno.getRegistroAcademico(), "1234", "ALUNO"), Usuario.class);

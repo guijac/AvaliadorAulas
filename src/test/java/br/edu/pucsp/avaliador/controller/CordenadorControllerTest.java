@@ -69,11 +69,11 @@ public class CordenadorControllerTest {
 
         ResponseEntity<DisciplinaEntity> analiseDeTeste = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", "Analise de Teste", DisciplinaEntity.class);
+                .postForEntity("/cordenador/cadastrarDisciplina", "Analise de Teste", DisciplinaEntity.class);
         assertNotNull(analiseDeTeste);
         ResponseEntity<DisciplinaEntity> analiseDeRequisitos = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", "Analise de Requisitos", DisciplinaEntity.class);
+                .postForEntity("/cordenador/cadastrarDisciplina", "Analise de Requisitos", DisciplinaEntity.class);
         assertNotNull(analiseDeRequisitos);
     }
 
@@ -97,7 +97,7 @@ public class CordenadorControllerTest {
     private ResponseEntity<DisciplinaDTO> cadastrarDisciplina(String disciplina1) {
         return this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO(disciplina1), DisciplinaDTO.class);
+                .postForEntity("/cordenador/cadastrarDisciplina", new DisciplinaDTO(disciplina1), DisciplinaDTO.class);
     }
 
     @Test
@@ -109,13 +109,13 @@ public class CordenadorControllerTest {
 
         ResponseEntity<ProfessorEntity> professorFromDB = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
+                .postForEntity("/recursosHumanos/contratar/professor", professor, ProfessorEntity.class);
 
         DisciplinaDTO diciplinaTestDeSoftware = cadastrarDisciplina("Test de Software").getBody();
         String codigoDisciplina = diciplinaTestDeSoftware.getCodigo();
         ResponseEntity<Aula> response1 = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarAula", new Aula(professorFromDB.getBody().getRegistroAcademico(), codigoDisciplina), Aula.class);
+                .postForEntity("/cordenador/cadastrarAula", new Aula(professorFromDB.getBody().getRegistroAcademico(), codigoDisciplina), Aula.class);
 
     }
 }

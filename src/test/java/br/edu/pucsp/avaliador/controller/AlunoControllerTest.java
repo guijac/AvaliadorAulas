@@ -105,7 +105,7 @@ public class AlunoControllerTest {
 
         ResponseEntity<ProfessorEntity> professorFromDB = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/RecursosHumanos/contratarProfessor", professor, ProfessorEntity.class);
+                .postForEntity("/recursosHumanos/contratar/professor", professor, ProfessorEntity.class);
 
         LocalDateTime localTime = LocalDateTime.now();
 
@@ -148,11 +148,11 @@ public class AlunoControllerTest {
     private Aula adicionarAula(ResponseEntity<ProfessorEntity> professorFromDB, String nomeAula, ResponseEntity<AlunoEntity> alunoMatricula, LocalDateTime horaInicio) {
         DisciplinaDTO diciplinaTestDeSoftware = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarDisciplina", new DisciplinaDTO(nomeAula), DisciplinaDTO.class).getBody();
+                .postForEntity("/cordenador/cadastrarDisciplina", new DisciplinaDTO(nomeAula), DisciplinaDTO.class).getBody();
         String codigoDisciplina = diciplinaTestDeSoftware.getCodigo();
         Aula aula = this.restTemplate
                 .withBasicAuth(cordenador.getRegistroAcademico(), "1234")
-                .postForEntity("/Cordenador/cadastrarAula", new Aula(professorFromDB.getBody().getRegistroAcademico(), codigoDisciplina), Aula.class).getBody();
+                .postForEntity("/cordenador/cadastrarAula", new Aula(professorFromDB.getBody().getRegistroAcademico(), codigoDisciplina), Aula.class).getBody();
 
         adicionarAgendamento(aula, horaInicio);
 
